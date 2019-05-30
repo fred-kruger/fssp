@@ -8,7 +8,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/TalismanFR/fssp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/TalismanFR/fssp/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/TalismanFR/fssp/badges/build.png?b=master)](https://scrutinizer-ci.com/g/TalismanFR/fssp/build-status/master)
-
+[![Code Coverage](https://scrutinizer-ci.com/g/TalismanFR/fssp/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/TalismanFR/fssp/?branch=master)
 
 Использование
 ----
