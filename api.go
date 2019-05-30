@@ -42,14 +42,14 @@ func (a *api) createTask(body []byte) *Task {
 	return &task
 }
 
-func (a *api) createResults(body []byte) Results {
+func (a *api) createResults(body []byte) *Results {
 	var results Results
 	json.Unmarshal(body, &results)
 
-	return results
+	return &results
 }
 
-func (a *api) GetResults(task Task) Results {
+func (a *api) GetResults(task Task) *Results {
 	url := a.buildResultUrl(task)
 
 	body := a.request(url)
@@ -69,7 +69,7 @@ func (a *api) WaitCompletedAndGetResults(task Task, result chan<- Results) {
 			cnt++
 			time.Sleep(3 + time.Second)
 		} else {
-			result <- results
+			result <- *results
 			return
 		}
 	}

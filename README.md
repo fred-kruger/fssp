@@ -6,6 +6,10 @@
 
 Библиотека уже рабочая, но пока еще бета.
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/TalismanFR/fssp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/TalismanFR/fssp/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/TalismanFR/fssp/badges/build.png?b=master)](https://scrutinizer-ci.com/g/TalismanFR/fssp/build-status/master)
+
+
 Использование
 ----
 
