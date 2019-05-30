@@ -67,14 +67,12 @@ func (a *api) WaitCompletedAndGetResults(task Task, result chan<- Results) {
 		results := a.GetResults(task);
 		if results.Response.IsProcessingTask() {
 			cnt++
-			fmt.Printf("Задача еще обрабатывается %v\n", cnt)
 			time.Sleep(3 + time.Second)
 		} else {
 			result <- results
 			return
 		}
 	}
-
 }
 
 /**
