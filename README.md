@@ -81,7 +81,25 @@ fmt.Printf("%+v\n", results)
 
 #### Поиск по номеру исполнительного производства
 
-Запилю обязательно
+```go 
+//одно поле, оно же обязательное
+ip:=fssp.Ip{Number:"7048/12/04/03"}
+
+task:=fssp_api.SearchIP(ip)
+
+//Даем задаче настояться
+time.Sleep(5 * time.Second)
+
+//получаем результаты поиска
+results := fssp_api.GetResults(task)
+if (results.Response.IsProcessingTask()) {
+    fmt.Println("Задача еще обрабатывается. Повторим запрос позже.")
+} else {
+    fmt.Println("Задач обработана")
+}
+
+fmt.Printf("%+v\n", results)
+```
 
 #### Ожидание обработки задачи
 
