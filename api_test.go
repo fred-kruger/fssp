@@ -26,6 +26,23 @@ func TestApi_SearchPhysical(t *testing.T) {
 	assert.True(t,task.IsSuccess())
 }
 
+func TestApi_SearchLegal(t *testing.T) {
+	ts := testServer(taskResultCorrect)
+	defer ts.Close()
+
+	api:=NewApi("token")
+	api.BaseUrl=ts.URL+"/"
+
+	task:=api.SearchLegal(legal)
+
+	assert.NotNil(t,task);
+
+	assert.Equal(t,"1d507d1a-40b7-4207-a481-8d439aa213e4",task.GetTask())
+
+	assert.True(t,task.IsSuccess())
+
+}
+
 func TestApi_GetResults(t *testing.T) {
 	ts := testServer(resultsSuccessCompleted)
 	defer ts.Close()
@@ -58,6 +75,8 @@ var (
 		Month string
 		Year  string
 	}{Day: "27", Month: "07", Year: "1965"}}
+
+	legal=Legal{Region:3,Name:"ООО БИЧУРАЛЕСПРОМ"}
 )
 
 const (

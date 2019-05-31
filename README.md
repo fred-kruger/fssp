@@ -58,7 +58,26 @@ fmt.Printf("%+v\n", results)
 
 #### Поиск исполнительный производст Юридического лица
 
-Пилится...
+```go 
+//Обязательные поля для апи region, name
+legal:=fssp.Legal{Region:3,Name:"ООО БИЧУРАЛЕСПРОМ"}
+
+//Кидаем запрос на создание задачи для обработки получаем данные по задаче	
+task:=fssp_api.SearchLegal(legal)
+
+//Даем задаче настояться
+time.Sleep(5 * time.Second)
+
+//получаем результаты поиска
+results := fssp_api.GetResults(task)
+if (results.Response.IsProcessingTask()) {
+    fmt.Println("Задача еще обрабатывается. Повторим запрос позже.")
+} else {
+    fmt.Println("Задач обработана")
+}
+
+fmt.Printf("%+v\n", results)
+```
 
 #### Поиск по номеру исполнительного производства
 
