@@ -1,12 +1,12 @@
 package fssp
 
 import (
-	"strings"
-	"net/url"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -15,46 +15,48 @@ type api struct {
 	BaseUrl     string
 	PhysicalUrl string
 	LegalUrl    string
-	IPUrl string
+	IPUrl       string
 	ResultUrl   string
 }
 
 func NewApi(token string) *api {
 	a := api{token: token, BaseUrl: "https://api-ip.fssprus.ru/api/v1.0/",
-		PhysicalUrl: "search/physical", LegalUrl:"search/legal",
-		IPUrl:"search/ip",ResultUrl: "result"};
+		PhysicalUrl: "search/physical", LegalUrl: "search/legal",
+		IPUrl: "search/ip", ResultUrl: "result"}
 	return &a
 }
 
 func (a api) GetToken() string {
-	return a.token;
+	return a.token
 }
 
 /**
 Поиск ИП физического лица
- */
+*/
 func (a *api) SearchPhysical(physical Physical) *Task {
-	url := a.buildUrlPhysical(physical);
+	url := a.buildUrlPhysical(physical)
+	fmt.Printf("%s", url)
 	body := a.request(url)
+	fmt.Printf("%s", body)
 	return a.createTask(body)
 }
 
 /**
 Поиск ИП юридического лица
- */
+*/
 func (a *api) SearchLegal(legal Legal) *Task {
-	url:=a.buildUrlLegal(legal)
-	body:=a.request(url)
+	url := a.buildUrlLegal(legal)
+	body := a.request(url)
 
-	return a.createTask(body);
+	return a.createTask(body)
 }
 
 /**
 Поиск по номеру Исполнительного производства
- */
-func (a *api) SearchIP(ip Ip) *Task{
-	url:=a.buildUrlIp(ip)
-	body:=a.request(url)
+*/
+func (a *api) SearchIP(ip Ip) *Task {
+	url := a.buildUrlIp(ip)
+	body := a.request(url)
 
 	return a.createTask(body)
 }
@@ -82,12 +84,12 @@ func (a *api) GetResults(task Task) *Results {
 }
 
 /**
-	Если задач не завершана, ждем и пытаемся снова.
- */
+Если задач не завершана, ждем и пытаемся снова.
+*/
 func (a *api) WaitCompletedAndGetResults(task Task, result chan<- Results) {
 	cnt := 0
 	for cnt < 5 {
-		results := a.GetResults(task);
+		results := a.GetResults(task)
 		if results.Response.IsProcessingTask() {
 			cnt++
 			time.Sleep(3 + time.Second)
@@ -100,16 +102,16 @@ func (a *api) WaitCompletedAndGetResults(task Task, result chan<- Results) {
 
 /**
 Url запрос к апи ФССП
- */
+*/
 func (a *api) request(urlString string) []byte {
 	httpResp, err := http.Get(urlString)
-	if (err != nil) {
+	if err != nil {
 		panic(err)
 	}
 	defer httpResp.Body.Close()
 
 	body, err := ioutil.ReadAll(httpResp.Body)
-	if (err != nil) {
+	if err != nil {
 		panic(err)
 	}
 
@@ -117,11 +119,11 @@ func (a *api) request(urlString string) []byte {
 }
 
 func (a *api) buildResultUrl(task Task) string {
-	values := url.Values{};
+	values := url.Values{}
 	values.Set("token", a.token)
 	values.Set("task", task.GetTask())
-	query := values.Encode();
-	url := strings.Builder{};
+	query := values.Encode()
+	url := strings.Builder{}
 	url.Grow(len(a.BaseUrl) + len(a.ResultUrl) + len(query) + 1)
 	url.WriteString(a.BaseUrl)
 	url.WriteString(a.ResultUrl)
@@ -132,14 +134,25 @@ func (a *api) buildResultUrl(task Task) string {
 }
 
 func (a *api) buildUrlPhysical(physical Physical) string {
-	values := url.Values{};
+	values := url.Values{}
 	values.Set("token", a.token)
-	values.Set("region", fmt.Sprint(physical.Region))
-	values.Set("firstname", physical.Firstname)
-	values.Set("lastname", physical.Lastname)
-	values.Set("birthdate", physical.Birthdate.GetBirthdate())
-	query := values.Encode();
-	url := strings.Builder{};
+	if physical.Region > 0 {
+		values.Set("region", fmt.Sprint(physical.Region))
+	}
+	if len(physical.Firstname) > 0 {
+		values.Set("firstname", physical.Firstname)
+	}
+	if len(physical.Secondname) > 0 {
+		values.Set("secondname", physical.Secondname)
+	}
+	if len(physical.Lastname) > 0 {
+		values.Set("lastname", physical.Lastname)
+	}
+	if (Birthdate{}) != physical.Birthdate {
+		values.Set("birthdate", physical.Birthdate.GetBirthdate())
+	}
+	query := values.Encode()
+	url := strings.Builder{}
 	url.Grow(len(a.BaseUrl) + len(a.PhysicalUrl) + len(query) + 1)
 	url.WriteString(a.BaseUrl)
 	url.WriteString(a.PhysicalUrl)
@@ -150,14 +163,14 @@ func (a *api) buildUrlPhysical(physical Physical) string {
 }
 
 func (a *api) buildUrlLegal(legal Legal) string {
-	values := url.Values{};
+	values := url.Values{}
 	values.Set("token", a.token)
 	values.Set("region", fmt.Sprint(legal.Region))
 	values.Set("name", legal.Name)
 	values.Set("address", legal.Address)
 
-	query := values.Encode();
-	url := strings.Builder{};
+	query := values.Encode()
+	url := strings.Builder{}
 	url.Grow(len(a.BaseUrl) + len(a.LegalUrl) + len(query) + 1)
 	url.WriteString(a.BaseUrl)
 	url.WriteString(a.LegalUrl)
@@ -167,13 +180,13 @@ func (a *api) buildUrlLegal(legal Legal) string {
 	return url.String()
 }
 
-func (a *api) buildUrlIp(ip Ip) string{
-	values := url.Values{};
+func (a *api) buildUrlIp(ip Ip) string {
+	values := url.Values{}
 	values.Set("token", a.token)
-	values.Set("number",ip.Number)
+	values.Set("number", ip.Number)
 
-	query := values.Encode();
-	url := strings.Builder{};
+	query := values.Encode()
+	url := strings.Builder{}
 	url.Grow(len(a.BaseUrl) + len(a.IPUrl) + len(query) + 1)
 	url.WriteString(a.BaseUrl)
 	url.WriteString(a.IPUrl)
