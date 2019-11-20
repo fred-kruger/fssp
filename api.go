@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+type Api interface {
+	SearchPhysical(physical Physical) *Task
+	WaitCompletedAndGetResults(task Task, result chan<- Results)
+}
+
 type api struct {
 	token       string
 	BaseUrl     string

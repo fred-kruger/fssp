@@ -2,16 +2,18 @@ package fssp
 
 /**
 Структура ответа при подаче запроса
- */
+*/
 type Task struct {
 	ResponseBase
-	Response struct {
-		Task string `json:"task"`
-	} `json:"response"`
+	Response TaskResponse `json:"response"`
+}
+
+type TaskResponse struct {
+	Task string `json:"task"`
 }
 
 func (this *Task) GetTask() string {
-	return this.Response.Task;
+	return this.Response.Task
 }
 
 type ResponseBase struct {
@@ -26,7 +28,7 @@ func (this *ResponseBase) IsSuccess() bool {
 
 /**
 Структура результатов поиска
- */
+*/
 type Results struct {
 	ResponseBase
 	Response ResponseResult `json:"response"`
@@ -40,31 +42,31 @@ type ResponseResult struct {
 }
 
 func (this *ResponseResult) IsCompletedTask() bool {
-	if (this.Status == 0) {
-		return true;
+	if this.Status == 0 {
+		return true
 	} else {
-		return false;
+		return false
 	}
 }
 
 /**
-	Задача еще обрабатывается?
- */
+Задача еще обрабатывается?
+*/
 func (this *ResponseResult) IsProcessingTask() bool {
-	if (this.Status == 2) {
-		return true;
+	if this.Status == 2 {
+		return true
 	} else {
-		return false;
+		return false
 	}
 }
 
 /**
 Структура найденого результата
- */
+*/
 type Result struct {
 	Status int `json:"status"`
-	Query struct {
-		Type int `json:"type"`
+	Query  struct {
+		Type   int `json:"type"`
 		Params struct {
 			Region    string `json:"region"`
 			Firstname string `json:"firstname"`
