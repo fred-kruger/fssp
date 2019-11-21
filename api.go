@@ -11,9 +11,13 @@ import (
 	"time"
 )
 
-type Api interface {
-	SearchPhysical(physical Physical) *Task
-	WaitCompletedAndGetResults(task Task, result chan<- Results)
+/*
+API - сервис для взаимодействия с api-ip.fssprus.ru.
+*/
+type API interface {
+	SearchPhysical(Physical) *Task
+	WaitCompletedAndGetResults(Task, chan<- Results)
+	SearchPhysicalGroup([]Physical) *Task
 }
 
 type api struct {
@@ -76,12 +80,12 @@ func (a *api) SearchIP(ip Ip) *Task {
 /*
 SearchPhysicalGroup - групповой запрос физических лиц.
 */
-func (a *api) SearchPhysicalGroup(queryes []Physical) *Task {
+func (a *api) SearchPhysicalGroup(physicalList []Physical) *Task {
 	url := a.GroupUrl
 
 	groupRequest := GroupRequest{
 		Token:   a.GetToken(),
-		Request: queryes,
+		Request: physicalList,
 	}
 
 	data, err := json.Marshal(groupRequest)
