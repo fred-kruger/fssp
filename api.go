@@ -1,6 +1,7 @@
 package fssp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -21,13 +22,19 @@ type api struct {
 	PhysicalUrl string
 	LegalUrl    string
 	IPUrl       string
+	GroupUrl    string
 	ResultUrl   string
 }
 
 func NewApi(token string) *api {
-	a := api{token: token, BaseUrl: "https://api-ip.fssprus.ru/api/v1.0/",
-		PhysicalUrl: "search/physical", LegalUrl: "search/legal",
-		IPUrl: "search/ip", ResultUrl: "result"}
+	a := api{
+		token:       token,
+		BaseUrl:     "https://api-ip.fssprus.ru/api/v1.0/",
+		PhysicalUrl: "search/physical",
+		LegalUrl:    "search/legal",
+		IPUrl:       "search/ip",
+		GroupUrl:    "/search/group",
+		ResultUrl:   "result"}
 	return &a
 }
 
@@ -62,6 +69,28 @@ func (a *api) SearchLegal(legal Legal) *Task {
 func (a *api) SearchIP(ip Ip) *Task {
 	url := a.buildUrlIp(ip)
 	body := a.request(url)
+
+	return a.createTask(body)
+}
+
+/*
+SearchPhysicalGroup - групповой запрос физических лиц.
+*/
+func (a *api) SearchPhysicalGroup(queryes []Physical) *Task {
+	url := a.GroupUrl
+
+	groupRequest := GroupRequest{
+		Token:   a.GetToken(),
+		Request: queryes,
+	}
+
+	data, err := json.Marshal(groupRequest)
+
+	if err != nil {
+		panic(err)
+	}
+
+	body := a.postRequest(url, data)
 
 	return a.createTask(body)
 }
@@ -123,6 +152,21 @@ func (a *api) request(urlString string) []byte {
 	return body
 }
 
+func (a *api) postRequest(urlString string, data []byte) []byte {
+	r := bytes.NewReader(data)
+	httpResp, err := http.Post(urlString, "application/json", r)
+	if err != nil {
+		panic(err)
+	}
+
+	body, err := ioutil.ReadAll(httpResp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	return body
+}
+
 func (a *api) buildResultUrl(task Task) string {
 	values := url.Values{}
 	values.Set("token", a.token)
@@ -153,8 +197,8 @@ func (a *api) buildUrlPhysical(physical Physical) string {
 	if len(physical.Lastname) > 0 {
 		values.Set("lastname", physical.Lastname)
 	}
-	if (Birthdate{}) != physical.Birthdate {
-		values.Set("birthdate", physical.Birthdate.GetBirthdate())
+	if len(physical.Birthdate) > 0 {
+		values.Set("birthdate", physical.Birthdate)
 	}
 	query := values.Encode()
 	url := strings.Builder{}

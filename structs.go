@@ -1,39 +1,54 @@
 package fssp
 
-/**
-Структура ответа при подаче запроса
+/*
+Task - Структура ответа при подаче запроса
 */
 type Task struct {
 	ResponseBase
 	Response TaskResponse `json:"response"`
 }
 
+/*
+TaskResponse - результат подачи запроса.
+*/
 type TaskResponse struct {
 	Task string `json:"task"`
 }
 
-func (this *Task) GetTask() string {
-	return this.Response.Task
+/*
+GetTask - получить результат подачи запроса.
+*/
+func (t *Task) GetTask() string {
+	return t.Response.Task
 }
 
+/*
+ResponseBase - базовая часть ответа.
+*/
 type ResponseBase struct {
 	Code      int    `json:"code"`
 	Status    string `json:"status"`
 	Exception string `json:"exception"`
 }
 
-func (this *ResponseBase) IsSuccess() bool {
-	return this.Status == "success"
+/*
+IsSuccess - успешный запрос.
+*/
+func (rb *ResponseBase) IsSuccess() bool {
+	return rb.Status == "success"
 }
 
-/**
-Структура результатов поиска
+/*
+Results - Структура результатов поиска
 */
 type Results struct {
 	ResponseBase
 	Response ResponseResult `json:"response"`
 }
 
+/*
+ResponseResult - результат поиска.
+*/
 type ResponseResult struct {
 	Status    int      `json:"status"`
 	TaskStart string   `json:"task_start"`
@@ -41,27 +56,30 @@ type ResponseResult struct {
 	Result    []Result `json:"result"`
 }
 
-func (this *ResponseResult) IsCompletedTask() bool {
-	if this.Status == 0 {
-		return true
-	} else {
-		return false
-	}
-}
-
-/**
-Задача еще обрабатывается?
+/*
+IsCompletedTask - задача завершена?
 */
-func (this *ResponseResult) IsProcessingTask() bool {
-	if this.Status == 2 {
+func (rr *ResponseResult) IsCompletedTask() bool {
+	if rr.Status == 0 {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
-/**
-Структура найденого результата
+/*
+IsProcessingTask - Задача еще обрабатывается?
+*/
+func (rr *ResponseResult) IsProcessingTask() bool {
+	if rr.Status == 2 {
+		return true
+	}
+
+	return false
+}
+
+/*
+Result - Структура найденого результата
 */
 type Result struct {
 	Status int `json:"status"`
@@ -82,4 +100,12 @@ type Result struct {
 		Bailiff       string `json:"bailiff"`
 		IPEnd         string `json:"ip_end"`
 	} `json:"result"`
+}
+
+/*
+GroupRequest - Структура группового запроса.
+*/
+type GroupRequest struct {
+	Token   string      `json:"token"`
+	Request interface{} `json:"request"`
 }
