@@ -81,7 +81,7 @@ func (a *api) SearchIP(ip Ip) *Task {
 SearchPhysicalGroup - групповой запрос физических лиц.
 */
 func (a *api) SearchPhysicalGroup(physicalList []Physical) *Task {
-	url := a.GroupUrl
+	url := a.BaseUrl + a.GroupUrl
 
 	groupRequest := GroupRequest{
 		Token:   a.GetToken(),
