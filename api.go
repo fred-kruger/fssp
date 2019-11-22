@@ -37,7 +37,7 @@ func NewApi(token string) *api {
 		PhysicalUrl: "search/physical",
 		LegalUrl:    "search/legal",
 		IPUrl:       "search/ip",
-		GroupUrl:    "/search/group",
+		GroupUrl:    "search/group",
 		ResultUrl:   "result"}
 	return &a
 }
@@ -82,10 +82,17 @@ SearchPhysicalGroup - групповой запрос физических ли�
 */
 func (a *api) SearchPhysicalGroup(physicalList []Physical) *Task {
 	url := a.BaseUrl + a.GroupUrl
-
+	count := len(physicalList)
 	groupRequest := GroupRequest{
 		Token:   a.GetToken(),
-		Request: physicalList,
+		Request: make([]GroupRequestData, count),
+	}
+
+	for index, element := range physicalList {
+		groupRequest.Request[index] = GroupRequestData{
+			Type:   1,
+			Params: element,
+		}
 	}
 
 	data, err := json.Marshal(groupRequest)

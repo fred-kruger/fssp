@@ -82,15 +82,8 @@ func (rr *ResponseResult) IsProcessingTask() bool {
 Result - Структура найденого результата
 */
 type Result struct {
-	Status int `json:"status"`
-	Query  struct {
-		Type   int `json:"type"`
-		Params struct {
-			Region    string `json:"region"`
-			Firstname string `json:"firstname"`
-			Lastname  string `json:"lastname"`
-		} `json:"params"`
-	} `json:"query"`
+	Status int   `json:"status"`
+	Query  Query `json:"query"`
 	Result []struct {
 		Name          string `json:"name"`
 		ExeProduction string `json:"exe_production"`
@@ -103,9 +96,36 @@ type Result struct {
 }
 
 /*
+Query - данные запроса.
+*/
+type Query struct {
+	Type   int         `json:"type"`
+	Params QueryParams `json:"params"`
+}
+
+/*
+QueryParams - параметры запроса.
+*/
+type QueryParams struct {
+	Region     int    `json:"region"`
+	Firstname  string `json:"firstname"`
+	Lastname   string `json:"lastname"`
+	Secondname string `json:"secondname"`
+	Birthdate  string `json:"birthdate"`
+}
+
+/*
 GroupRequest - Структура группового запроса.
 */
 type GroupRequest struct {
-	Token   string      `json:"token"`
-	Request interface{} `json:"request"`
+	Token   string             `json:"token"`
+	Request []GroupRequestData `json:"request"`
+}
+
+/*
+GroupRequestData - данные группового запроса.
+*/
+type GroupRequestData struct {
+	Type   int         `json:"type"`
+	Params interface{} `json:"params"`
 }
