@@ -51,9 +51,7 @@ func (a api) GetToken() string {
 */
 func (a *api) SearchPhysical(physical Physical) *Task {
 	url := a.buildUrlPhysical(physical)
-	fmt.Printf("%s", url)
 	body := a.request(url)
-	fmt.Printf("%s", body)
 	return a.createTask(body)
 }
 
