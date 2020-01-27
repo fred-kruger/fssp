@@ -82,17 +82,22 @@ func (rr *ResponseResult) IsProcessingTask() bool {
 Result - Структура найденого результата
 */
 type Result struct {
-	Status int   `json:"status"`
-	Query  Query `json:"query"`
-	Result []struct {
-		Name          string `json:"name"`
-		ExeProduction string `json:"exe_production"`
-		Details       string `json:"details"`
-		Subject       string `json:"subject"`
-		Department    string `json:"department"`
-		Bailiff       string `json:"bailiff"`
-		IPEnd         string `json:"ip_end"`
-	} `json:"result"`
+	Status int          `json:"status"`
+	Query  Query        `json:"query"`
+	Result []ResultItem `json:"result"`
+}
+
+/*
+ResultItem - структура элемента результата.
+*/
+type ResultItem struct {
+	Name          string `json:"name"`
+	ExeProduction string `json:"exe_production"`
+	Details       string `json:"details"`
+	Subject       string `json:"subject"`
+	Department    string `json:"department"`
+	Bailiff       string `json:"bailiff"`
+	IPEnd         string `json:"ip_end"`
 }
 
 /*
