@@ -33,7 +33,7 @@ type api struct {
 func NewApi(token string) *api {
 	a := api{
 		token:       token,
-		BaseUrl:     "https://api-ip.fssprus.ru/api/v1.0/",
+		BaseUrl:     "https://api-ip.fssp.gov.ru/api/v1.0/",
 		PhysicalUrl: "search/physical",
 		LegalUrl:    "search/legal",
 		IPUrl:       "search/ip",
